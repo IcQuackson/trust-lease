@@ -33,7 +33,7 @@ generate identity-service \
 generate lease-service \
   "web,security,oauth2-resource-server,data-jpa,postgresql,validation,flyway,kafka,actuator,lombok,devtools,docker-compose"
 
-generate enforcement-service \
+generate authorization-service \
   "web,security,oauth2-resource-server,data-jdbc,postgresql,data-redis,validation,actuator,lombok,devtools,docker-compose"
 
 generate policy-service \

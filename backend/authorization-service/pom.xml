@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.trustlease</groupId>
-	<artifactId>enforcement-service</artifactId>
+	<artifactId>authorization-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>enforcement-service</name>
+	<name>authorization-service</name>
 	<description/>
 	<url/>
 	<licenses>

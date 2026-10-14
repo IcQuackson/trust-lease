@@ -1,10 +1,10 @@
-package com.trustlease.enforcementservice;
+package com.trustlease.authorizationservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EnforcementServiceApplicationTests {
+class AuthorizationServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

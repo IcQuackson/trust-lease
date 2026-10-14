@@ -1,0 +1,18 @@
+# api-gateway properties
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+        server:
+            webmvc:
+                routes:
+                    #TODO add /leases/{id}/audit route to audit service before lease-service-route
+                  - id: lease-service-route
+                    uri: http://localhost:8081
+                    predicates:
+                        - Path=/api/v1/leases/**
+                        - Method=GET,POST,PATCH,DELETE
