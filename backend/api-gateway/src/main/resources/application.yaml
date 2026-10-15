@@ -14,5 +14,5 @@ spring:
                   - id: lease-service-route
                     uri: http://localhost:8081
                     predicates:
-                        - Path=/api/v1/leases/**
+                        - Path=/api/v1/leases/**,/api/v1/leases
                         - Method=GET,POST,PATCH,DELETE
