@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.trustlease</groupId>
+	<artifactId>trustlease</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>TrustLease</name>
+	<description>Reactor project for the TrustLease backend services.</description>
+
+	<modules>
+		<module>backend/api-gateway</module>
+		<module>backend/audit-service</module>
+		<module>backend/authorization-service</module>
+		<module>backend/identity-service</module>
+		<module>backend/lease-service</module>
+		<module>backend/notification-service</module>
+		<module>backend/policy-service</module>
+	</modules>
+</project>

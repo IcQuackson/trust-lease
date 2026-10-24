@@ -1,6 +1,7 @@
 package com.trustlease.leaseservice;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -159,6 +160,32 @@ class LeaseApiTests {
 					.param("permissions", "READ")
 					.param("expiresAt", "2030-02-01T12:30:00Z")
 					.param("maxUses", "5"))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void patchLeaseBindsFormFieldsAndUpdatesLease() throws Exception {
+		String updatedExpiresAt = "2029-01-01T00:00:00Z";
+
+		mockMvc.perform(patch(BASE_URL + "/" + testLeaseId)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.param("permissions", "READ")
+					.param("expiresAt", updatedExpiresAt))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(get(BASE_URL + "/" + testLeaseId))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(testLeaseId))
+				.andExpect(jsonPath("$.expiresAt").value(updatedExpiresAt))
+				.andExpect(jsonPath("$.permissions[0]").value("READ"));
+	}
+
+	@Test
+	void patchLeaseRejectsUnknownPermission() throws Exception {
+		mockMvc.perform(patch(BASE_URL + "/" + testLeaseId)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.param("permissions", "NOT_A_PERMISSION")
+					.param("expiresAt", "2029-01-01T00:00:00Z"))
 				.andExpect(status().isBadRequest());
 	}
 }
