@@ -1,5 +1,7 @@
 package com.trustlease.leaseservice;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -187,5 +189,13 @@ class LeaseApiTests {
 					.param("permissions", "NOT_A_PERMISSION")
 					.param("expiresAt", "2029-01-01T00:00:00Z"))
 				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void deleteLeaseRemovesLeaseAndReturnsSuccess() throws Exception {
+		mockMvc.perform(delete(BASE_URL + "/" + testLeaseId))
+				.andExpect(status().isOk());
+
+		assertFalse(leaseRepository.existsById(testLeaseId));
 	}
 }

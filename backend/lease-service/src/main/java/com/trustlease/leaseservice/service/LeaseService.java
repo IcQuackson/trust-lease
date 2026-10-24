@@ -76,4 +76,9 @@ public class LeaseService {
 			leaseRepository.save(lease);
 		}
 	}
+
+	public void deleteLease(Long leaseId) {
+		Lease lease = leaseRepository.findById(leaseId).orElseThrow(() -> new ResourceNotFoundException(leaseId.toString()));
+		leaseRepository.delete(lease);
+	}
 }

@@ -22,6 +22,16 @@
 
 ---
 
+
+## ⚠️ AI assistance disclosure ⚠️
+
+| Level of assistance | Areas |
+|:---:|:---:|
+| **NONE** | Application code |
+| **Light** | Some Docker Compose files and configuration, sql seed scripts |
+| **Heavy** | README and Tests |
+
+
 ## At a glance
 
 | | |
