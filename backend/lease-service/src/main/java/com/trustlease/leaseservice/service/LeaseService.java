@@ -8,11 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.trustlease.leaseservice.dto.request.CreateLeaseRequest;
 import com.trustlease.leaseservice.dto.response.LeaseResponseDto;
 import com.trustlease.leaseservice.dto.response.PageResponse;
 import com.trustlease.leaseservice.models.Lease;
 import com.trustlease.leaseservice.repository.LeaseRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,4 +38,18 @@ public class LeaseService {
 		return LeaseResponseDto.toDto(lease, null);
 	}
 
+	public LeaseResponseDto createLease(CreateLeaseRequest request) {
+		
+		Lease newLease = new Lease();
+		newLease.setOrgId(request.orgId());
+		newLease.setResourceId(request.resourceId());
+		newLease.setSubjectId(request.subjectId());
+		newLease.setPermissions(request.permissions());
+		newLease.setExpiresAt(request.expiresAt());
+		newLease.setMaxUses(request.maxUses());
+
+		Lease savedLease = leaseRepository.save(newLease);
+
+		return LeaseResponseDto.toDto(savedLease, null);
+	}
 }

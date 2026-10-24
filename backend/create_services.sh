@@ -9,6 +9,11 @@ generate() {
   local name="$1"
   local dependencies="$2"
 
+  if [[ -e "$name" ]]; then
+    echo "Skipping $name: it already exists."
+    return
+  fi
+
   echo "Generating $name..."
 
   curl -fsSLG https://start.spring.io/starter.zip \
@@ -32,6 +37,9 @@ generate identity-service \
 
 generate lease-service \
   "web,security,oauth2-resource-server,data-jpa,postgresql,validation,flyway,kafka,actuator,lombok,devtools,docker-compose"
+
+generate idempotency-service \
+  "web,security,oauth2-resource-server,data-redis,validation,actuator,lombok,devtools,docker-compose"
 
 generate authorization-service \
   "web,security,oauth2-resource-server,data-jdbc,postgresql,data-redis,validation,actuator,lombok,devtools,docker-compose"

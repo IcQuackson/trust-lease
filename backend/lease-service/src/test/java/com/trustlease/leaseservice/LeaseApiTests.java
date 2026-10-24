@@ -1,6 +1,7 @@
 package com.trustlease.leaseservice;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,10 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
@@ -52,7 +55,10 @@ class LeaseApiTests {
 	@Autowired
 	private LeaseRepository leaseRepository;
 
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	private Long testLeaseId;
+	private Long createdLeaseId;
 
 	@DynamicPropertySource
 	static void configureDatabase(DynamicPropertyRegistry properties) {
@@ -77,6 +83,9 @@ class LeaseApiTests {
 
 	@AfterEach
 	void removeLeaseFixture() {
+		if (createdLeaseId != null) {
+			leaseRepository.deleteById(createdLeaseId);
+		}
 		if (testLeaseId != null) {
 			leaseRepository.deleteById(testLeaseId);
 		}
@@ -115,5 +124,41 @@ class LeaseApiTests {
 				.andExpect(jsonPath("$.maxUses").value(10))
 				.andExpect(jsonPath("$.remainingUses").doesNotExist())
 				.andExpect(jsonPath("$.status").value("ACTIVE"));
+	}
+
+	@Test
+	void createLeaseBindsFormFieldsAndReturnsCreatedLease() throws Exception {
+		String expiresAt = "2030-02-01T12:30:00Z";
+		mockMvc.perform(post(BASE_URL + "/")
+						.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+						.param("orgId", "8")
+						.param("resourceId", "102")
+						.param("subjectId", "202")
+						.param("permissions", "READ")
+						.param("expiresAt", expiresAt)
+						.param("maxUses", "5"))
+				.andDo(result -> createdLeaseId = objectMapper
+						.readTree(result.getResponse().getContentAsString()).get("id").asLong())
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.id").isNumber())
+				.andExpect(jsonPath("$.orgId").value(8))
+				.andExpect(jsonPath("$.resourceId").value(102))
+				.andExpect(jsonPath("$.subjectId").value(202))
+				.andExpect(jsonPath("$.permissions[0]").value("READ"))
+				.andExpect(jsonPath("$.expiresAt").value(expiresAt))
+				.andExpect(jsonPath("$.maxUses").value(5));
+	}
+
+	@Test
+	void createLeaseRejectsNonPositiveOrgId() throws Exception {
+		mockMvc.perform(post(BASE_URL + "/")
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.param("orgId", "0")
+					.param("resourceId", "102")
+					.param("subjectId", "202")
+					.param("permissions", "READ")
+					.param("expiresAt", "2030-02-01T12:30:00Z")
+					.param("maxUses", "5"))
+				.andExpect(status().isBadRequest());
 	}
 }
